@@ -8,8 +8,8 @@ import os
 
 @hook
 def agent_prompt_prefix(prefix, cat):
-#    k_ppf = "./cat/plugins/cc_KaguraPP/promptprefix.txt"
-    k_ppf = settings["kpp_file"]
+    k_ppf = "./cat/plugins/cc_KaguraPP/promptprefix.txt"
+#    k_ppf = settings["kpp_file"]
     if os.path.exists(k_ppf):
         with open(k_ppf, 'r') as f:
             prefix = f.read()
