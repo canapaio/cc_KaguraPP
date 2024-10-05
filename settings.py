@@ -34,7 +34,8 @@ Parlo in modo umano e sincero.
 """,
         extra={"type": "TextArea"},
     )
-    kpp_file: str | None = "./cat/plugins/cc_KaguraPP/promptprefix.txt"
+    kpp_file: str | None = "promptprefix.txt"
+    kpp_path: str | None = "./cat/plugins/cc_KaguraPP/"
     episodic_memory_k: int = 30
     episodic_memory_threshold: float = 0.7
     declarative_memory_k: int = 30
@@ -43,7 +44,7 @@ Parlo in modo umano e sincero.
     procedural_memory_threshold: float = 0.7
     user_name: str | None = "Human"
     language: Languages = Languages.Italian
-    chunk_size: int = 8196
+    chunk_size: int = 1024
     chunk_overlap: int = 128
 
     @field_validator("episodic_memory_threshold")

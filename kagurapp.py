@@ -8,29 +8,27 @@ import os
 
 @hook
 def agent_prompt_prefix(prefix, cat):
-    k_ppf = "./cat/plugins/cc_KaguraPP/promptprefix.txt"
-#    k_ppf = settings["kpp_file"]
+    settings = cat.mad_hatter.get_plugin().load_settings()
+    k_ppf = settings["kpp_path"] + settings["kpp_file"]
     if os.path.exists(k_ppf):
         with open(k_ppf, 'r') as f:
             prefix = f.read()
     else:
-        settings = cat.mad_hatter.get_plugin().load_settings()
         prefix = settings["prompt_prefix"]
     return prefix
 
 @hook
 def cat_recall_query(user_message, cat):
-    conversation_so_far  = cat.stringify_chat_history(latest_n=5)
+    conversation_so_far  = cat.stringify_chat_history(latest_n=10)
 
     prompt = f"""
-Genera un elenco in markdown di parole chiave congrue da <testo-da-analizzare> per agevolare l'embedder a trovare gli argomenti memorizzati nel sistema:
+Genera un elenco in markdown di parole chiave sia in italiano che in inglese congrue da <testo-da-analizzare> per agevolare l'embedder a trovare gli argomenti memorizzati nel sistema:
 Elenca tutti i termini specifici 
 Aggiungi eventuali chiavi non presenti che siano congrue con l'argomento
 
 NON COMMENTARE L'ELENCO
 Esempio:
-- Parola 1
-- Parola 2
+Parola1, Word1, Parola2, Word2
 ...
 
 <testo-da-analizzare>
@@ -44,7 +42,7 @@ PS (NON COMMENTARE L'ELENCO)
 """
     
     compressed_query = cat.llm(prompt)
-    compressed_query += cat.stringify_chat_history(latest_n=3)
+    compressed_query += f"/n/n {cat.stringify_chat_history(latest_n=4)}"
 
     return compressed_query
 
@@ -54,7 +52,9 @@ def agent_prompt_suffix(suffix, cat):
 #    cat.log 
     suffix = f"""
 <Conversazione>
+
 {cat.stringify_chat_history(latest_n=5)}
+
 </conversaione>
 
 """
@@ -62,15 +62,19 @@ def agent_prompt_suffix(suffix, cat):
     suffix += """
 <memory>
     <memory-past-conversations>
-{episodic_memory}
+
+{{episodic_memory}}
+
     </memory-past-conversations>
-
     <memory-from-documents>
-{declarative_memory}
-    </memory-from-documents>
 
+{{declarative_memory}}
+
+    </memory-from-documents>
     <memory-from-executed-actions>
-{tools_output}
+
+ {{tools_output}}
+
     </memory-from-executed-actions>
 </memory>
 
