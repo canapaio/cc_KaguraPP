@@ -2,7 +2,7 @@ from cat.mad_hatter.decorators import tool, hook, plugin
 from pydantic import BaseModel
 from datetime import datetime, date
 from cat.log import log
-import os
+import os, re
 
 
 
@@ -15,77 +15,66 @@ def agent_prompt_prefix(prefix, cat):
             prefix = f.read()
     else:
         prefix = settings["prompt_prefix"]
+#    prefix += f"""
+#<Conversazione>
+#
+#{re.sub(r'{}:/<>','_',cat.stringify_chat_history(latest_n=5))}
+#
+#</conversaione>
+#"""    
     return prefix
 
 @hook
 def cat_recall_query(user_message, cat):
-    conversation_so_far  = cat.stringify_chat_history(latest_n=10)
-
     prompt = f"""
-Genera un elenco in markdown di parole chiave sia in italiano che in inglese congrue da <testo-da-analizzare> per agevolare l'embedder a trovare gli argomenti memorizzati nel sistema:
-Elenca tutti i termini specifici 
-Aggiungi eventuali chiavi non presenti che siano congrue con l'argomento
-
-NON COMMENTARE L'ELENCO
-Esempio:
-Parola1, Word1, Parola2, Word2
-...
-
+Genera un elenco come da 'esempio' in plaintext di parole chiave in italiano e inglese congrue da 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
+<regole>
+- Genera parole chiave in base al 'testo-da-analizzare' in italiano e iglese
+- Elenca tutti i termini specifici dal 'testo-da-analizzare'
+- Aggiungi chiavi non presenti che siano congrue con l'argomento
+- NON COMMENTARE L'ELENCO
+- Crea un elecon pulito senza commenti
+- Ignoras AI e Human
+</regole>
+<esempio>
+Testa, torre, macchina, ...
+Head, tower, car, ...
+</esempio>
 <testo-da-analizzare>
 
-{conversation_so_far}
+{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=10)))}
 
 </testo-da-analizzare>
-
 PS (NON COMMENTARE L'ELENCO)
 
 """
     
-    compressed_query = cat.llm(prompt)
-    compressed_query += f"/n/n {cat.stringify_chat_history(latest_n=4)}"
+    kpp_qwery = cat.llm(prompt)
+    kpp_qwery += re.sub(r'AI|Human','_',cat.stringify_chat_history(latest_n=4))
 
-    return compressed_query
+    return kpp_qwery
 
 @hook
 def agent_prompt_suffix(suffix, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
-#    cat.log 
-    suffix = f"""
-<Conversazione>
-
-{cat.stringify_chat_history(latest_n=5)}
-
-</conversaione>
-
-"""
-
-    suffix += """
+    suffix = """
 <memory>
     <memory-past-conversations>
-
-{{episodic_memory}}
-
+{episodic_memory}
     </memory-past-conversations>
     <memory-from-documents>
-
-{{declarative_memory}}
-
+{declarative_memory}
     </memory-from-documents>
     <memory-from-executed-actions>
-
- {{tools_output}}
-
+{tools_output}
     </memory-from-executed-actions>
 </memory>
-
-    """ 
+"""
 
     suffix += f"""
     Date Time:{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}
-
     ALWAYS answer in {settings['language']}
-    
-    """
+ """
     return suffix
 
 @hook
