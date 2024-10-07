@@ -1,9 +1,9 @@
 from cat.mad_hatter.decorators import tool, hook, plugin
+# from cat.factory.llm import LLMSettings
 from pydantic import BaseModel
 from datetime import datetime, date
 from cat.log import log
 import os, re
-
 
 
 @hook
@@ -27,30 +27,29 @@ def agent_prompt_prefix(prefix, cat):
 @hook
 def cat_recall_query(user_message, cat):
     prompt = f"""
-Genera un elenco come da 'esempio' in plaintext di parole chiave in italiano e inglese congrue da 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
-<regole>
+# Genera un elenco di parole chiave in italiano e inglese relative al contenuto di 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
+# <regole>
 - Genera parole chiave in base al 'testo-da-analizzare' in italiano e iglese
 - Elenca tutti i termini specifici dal 'testo-da-analizzare'
 - Aggiungi chiavi non presenti che siano congrue con l'argomento
 - NON COMMENTARE L'ELENCO
-- Crea un elecon pulito senza commenti
+- Crea un elecon pulito privo di commenti
 - Ignoras AI e Human
 </regole>
-<esempio>
-Testa, torre, macchina, ...
-Head, tower, car, ...
-</esempio>
-<testo-da-analizzare>
+
+# <testo-da-analizzare>
 
 {re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=10)))}
 
 </testo-da-analizzare>
-PS (NON COMMENTARE L'ELENCO)
+PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizzare> usando le <regole> )
 
 """
-    
+
     kpp_qwery = cat.llm(prompt)
     kpp_qwery += re.sub(r'AI|Human','_',cat.stringify_chat_history(latest_n=4))
+
+#    cat.send_chat_message(LLMSettings("max_tokens"))
 
     return kpp_qwery
 
