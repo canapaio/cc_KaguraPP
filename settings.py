@@ -36,9 +36,9 @@ Parlo in modo umano e sincero.
     )
     kpp_file: str | None = "promptprefix.txt"
     kpp_path: str | None = "./cat/plugins/cc_KaguraPP/"
-    episodic_memory_k: int = 30
-    episodic_memory_threshold: float = 0.7
-    declarative_memory_k: int = 30
+    episodic_memory_k: int = 20
+    episodic_memory_threshold: float = 0.6
+    declarative_memory_k: int = 20
     declarative_memory_threshold: float = 0.7
     procedural_memory_k: int = 3
     procedural_memory_threshold: float = 0.7
@@ -46,6 +46,16 @@ Parlo in modo umano e sincero.
     language: Languages = Languages.Italian
     chunk_size: int = 1024
     chunk_overlap: int = 128
+    kpp_ctx_F: int = Field(
+        title="ollama num ctx full",
+        default= 24576
+        )
+    kpp_ctx_S: int = Field(
+        title="ollama num ctx small",
+        default= 4096
+        )
+
+
 
     @field_validator("episodic_memory_threshold")
     @classmethod

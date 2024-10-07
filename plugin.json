@@ -1,10 +1,10 @@
 {
     "name": "Kagura PromptPrefx",
-    "version": "0.0.1",
+    "version": "0.1.002",
     "description": "Save prompt prefix.",
     "author_name": "Canapaio",
     "author_url": "https://github.com/canapaio",
     "plugin_url": "https://github.com/canapaio/cc_KaguraPP",
-    "tags": "cat, Kagura, kawaii",
+    "tags": "cat, KaguraAI, kawaii",
     "thumb": ""
 }

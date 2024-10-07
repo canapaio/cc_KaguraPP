@@ -26,7 +26,7 @@ def agent_prompt_prefix(prefix, cat):
 
 @hook
 def cat_recall_query(user_message, cat):
-    prompt = f"""
+    kprompt = f"""
 # Genera un elenco di parole chiave in italiano e inglese relative al contenuto di 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
 # <regole>
 - Genera parole chiave in base al 'testo-da-analizzare' in italiano e iglese
@@ -46,8 +46,9 @@ PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizza
 
 """
 
-    kpp_qwery = cat.llm(prompt)
-    kpp_qwery += re.sub(r'AI|Human','_',cat.stringify_chat_history(latest_n=4))
+    kpp_qwery = f"""{cat.llm(kprompt)}
+
+{re.sub(r'AI|Human','_',cat.stringify_chat_history(latest_n=4))}"""
 
 #    cat.send_chat_message(LLMSettings("max_tokens"))
 
