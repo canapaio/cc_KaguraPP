@@ -1,6 +1,6 @@
 {
     "name": "Kagura PromptPrefx-suffix",
-    "version": "0.1.006",
+    "version": "0.1.007",
     "description": "KaguraAI and agents to manage ollama models and prompt prefix-suffix.",
     "author_name": "Canapaio",
     "author_url": "https://github.com/canapaio",
