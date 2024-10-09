@@ -5,12 +5,14 @@ from datetime import datetime, date
 from cat.log import log
 import os, re
 
-def kre(text):
+def kre(text: str):
+    old: str
+    new: str
     replacements = [
         ('- AI', '- KaguraAI'),
         ('- Human', '- H'),
         ('{', '/{'),
-        ('}', '/{)')
+        ('}', '/}')
 ]
     for old, new in replacements:
         text = re.sub(old, new, text)
@@ -19,21 +21,14 @@ def kre(text):
 
 
 @hook
-def agent_prompt_prefix(prefix, cat):
+def agent_prompt_prefix(prefix: str, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
-    k_ppf = settings["kpp_path"] + settings["kpp_file"]
+    k_ppf: str = settings["kpp_path"] + settings["kpp_file"]
     if os.path.exists(k_ppf):
         with open(k_ppf, 'r') as f:
             prefix = f.read()
     else:
         prefix = settings["prompt_prefix"]
-#    prefix += f"""
-#<Conversazione>
-#
-#{re.sub(r'{}:/<>','_',cat.stringify_chat_history(latest_n=5))}
-#
-#</conversaione>
-#"""    
     return prefix
 
 @hook
@@ -42,7 +37,7 @@ def cat_recall_query(user_message, cat):
     kprompt = f"""
 Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di parole chiavi congroue in italiano ed iglese seguendo le indicazioni contenute in 'regole':
 <regole>
-- Genera parole chiave in base al 'testo-da-analizzare' in italiano e iglese
+- Genera parole chiave in base al 'testo-da-analizzare' in italiano e inglese
 - Elenca tutti i termini specifici dal 'testo-da-analizzare'
 - Aggiungi chiavi non presenti che siano congrue con l'argomento
 - NON COMMENTARE L'ELENCO
@@ -70,18 +65,25 @@ PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizza
 @hook
 def agent_prompt_suffix(suffix, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
+
+#    suffix = f"""
+#<Conversazione>
+#    {kre(cat.stringify_chat_history(latest_n=5))}
+#</conversaione>"""
+
     suffix = """
-<memory>
-    <memory-past-conversations>
+<oblio>
+    <memory>
+        <memory-past-conversations>
 {episodic_memory}
-    </memory-past-conversations>
-    <memory-from-documents>
+        </memory-past-conversations>
+        <memory-from-documents>
 {declarative_memory}
-    </memory-from-documents>
-    <memory-from-executed-actions>
+        </memory-from-documents>
+        <memory-from-executed-actions>
 {tools_output}
-    </memory-from-executed-actions>
-</memory>
+        </memory-from-executed-actions>
+    </memory>
 """
 
     suffix += f"""

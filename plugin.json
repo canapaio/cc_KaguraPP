@@ -1,10 +1,10 @@
 {
-    "name": "Kagura PromptPrefx",
-    "version": "0.1.005",
-    "description": "Save prompt prefix.",
+    "name": "Kagura PromptPrefx-suffix",
+    "version": "0.1.006",
+    "description": "KaguraAI and agents to manage ollama models and prompt prefix-suffix.",
     "author_name": "Canapaio",
     "author_url": "https://github.com/canapaio",
     "plugin_url": "https://github.com/canapaio/cc_KaguraPP",
-    "tags": "cat, KaguraAI, kawaii",
+    "tags": "cat, KaguraAI, kawaii, promptprefix, promptsuffix",
     "thumb": ""
 }
