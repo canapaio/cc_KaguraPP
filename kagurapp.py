@@ -5,6 +5,18 @@ from datetime import datetime, date
 from cat.log import log
 import os, re
 
+def kre(text):
+    replacements = [
+        ('- AI', '- KaguraAI'),
+        ('- Human', '- H'),
+        ('{', '/{'),
+        ('}', '/{)')
+]
+    for old, new in replacements:
+        text = re.sub(old, new, text)
+        
+    return text
+
 
 @hook
 def agent_prompt_prefix(prefix, cat):
@@ -27,10 +39,12 @@ def agent_prompt_prefix(prefix, cat):
 @hook
 def cat_recall_query(user_message, cat):
 # Genera un elenco di parole chiave in italiano e inglese relative al contenuto di 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
+#{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=10)))}
+
 
     kprompt = f"""
-# Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di parole chiavi congroue in italiano ed iglese seguendo le indicazioni contenute in 'regole':
-# <regole>
+Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di parole chiavi congroue in italiano ed iglese seguendo le indicazioni contenute in 'regole':
+<regole>
 - Genera parole chiave in base al 'testo-da-analizzare' in italiano e iglese
 - Elenca tutti i termini specifici dal 'testo-da-analizzare'
 - Aggiungi chiavi non presenti che siano congrue con l'argomento
@@ -39,36 +53,20 @@ def cat_recall_query(user_message, cat):
 - Ignoras AI e Human
 </regole>
 
-# <testo-da-analizzare>
+<testo-da-analizzare>
 
-{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=10)))}
+{kre(cat.stringify_chat_history(latest_n=10))}
 
 </testo-da-analizzare>
 PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizzare> usando le <regole> )
 
 """
+    
+    kpp_qwery = f"""
+{kre(cat.llm(kprompt))}
+{kre(cat.stringify_chat_history(latest_n=4))}
 
-#    kpp_qwery = f"""{cat.llm(kprompt)}
-#{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=4)))}"""
-
-#    num_ctx_llm = 4096
-#    old_num_ctx = llm_instance.num_ctx  # Assuming you can access the current num_ctx
-#    llm_instance.num_ctx = num_ctx_llm
-
-# Now you can run your prompt with the updated context size
-#    options = {
-#        "num_ctx": 1024,  # Imposta la lunghezza del contesto
-#        "temperature": 0.7,
-#        "max_tokens": 1024
-#    }
-    kpp_qwery = f"""{cat.llm(kprompt)}
-
-{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=4)))}
 """
-
-#    llm_instance.num_ctx = old_num_ctx
-
-#    cat.send_chat_message(LLMSettings("max_tokens"))
 
     return kpp_qwery
 
