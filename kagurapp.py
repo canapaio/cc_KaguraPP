@@ -38,9 +38,6 @@ def agent_prompt_prefix(prefix, cat):
 
 @hook
 def cat_recall_query(user_message, cat):
-# Genera un elenco di parole chiave in italiano e inglese relative al contenuto di 'testo-da-analizzare' per aiutare la ricercan nell'embedder seguendo le seguenti 'regole':
-#{re.sub(r'- AI','- KaguraAI',re.sub(r'- Human','- H',cat.stringify_chat_history(latest_n=10)))}
-
 
     kprompt = f"""
 Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di parole chiavi congroue in italiano ed iglese seguendo le indicazioni contenute in 'regole':
@@ -90,6 +87,7 @@ def agent_prompt_suffix(suffix, cat):
     suffix += f"""
     Date Time:{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}
     ALWAYS answer in {settings['language']}
+</oblio>
  """
     return suffix
 
