@@ -1,35 +1,10 @@
 from cat.mad_hatter.decorators import tool, hook, plugin
-# from cat.factory.llm import LLMSettings
+from cat.factory.custom_llm import CustomOllama
+#from cat.factory.llm import LLMSettings
 from pydantic import BaseModel
 from datetime import datetime, date
 from cat.log import log
-import os, re
-
-def kre(text: str):
-    old: str
-    new: str
-    replacements = [
-        ('- AI', '- KaguraAI'),
-        ('- Human', '- H'),
-        ('{', '/{'),
-        ('}', '/}')
-]
-    for old, new in replacements:
-        text = re.sub(old, new, text)
-        
-    return text
-
-
-@hook
-def agent_prompt_prefix(prefix: str, cat):
-    settings = cat.mad_hatter.get_plugin().load_settings()
-    k_ppf: str = settings["kpp_path"] + settings["kpp_file"]
-    if os.path.exists(k_ppf):
-        with open(k_ppf, 'r') as f:
-            prefix = f.read()
-    else:
-        prefix = settings["prompt_prefix"]
-    return prefix
+import os, re, copy
 
 @hook
 def cat_recall_query(user_message, cat):
@@ -53,14 +28,61 @@ Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di
 PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizzare> usando le <regole> )
 
 """
-    
+
+    #gatto = cat._llm["CustomOllama"]
+    #cat.send_chat_message(repr(CustomOllama))
+    #ccat._llm.CustomOllama(num_ctx) = 1024
+    #oldctx: int = cat._llm.num_ctx()
+    #cat._llm.num_ctx() = settings["kpp_ctx_S"]
+    #cat.send_chat_message(repr(cat._llm))
+
+    #cat._llm.CustomOllama = (base_url='http://192.168.10.10:11434', model='qwen2.5-coder:latest', num_ctx=1024, repeat_last_n=64, repeat_penalty=1.1, temperature=0.8)
+
+#    cat.send_chat_message(repr(cat._llm)) cat.factory.custom_llm.CustomOllama
+#    cat.send_chat_message(repr(cat.factory.custom_llm))
+
+    llm_tmp = copy.deepcopy(cat._llm)
+
+    alt_llm = cat.mad_hatter.get_plugin().load_settings().get('num_ctx', 1024)
+    if alt_llm != '':
+        llm_tmp.num_ctx = alt_llm
+    #llm_query_result = llm_tmp.invoke(kprompt).content
+    #cat.send_chat_message(repr(llm_query_result))
+
     kpp_qwery = f"""
-{kre(cat.llm(kprompt))}
+{kre(llm_tmp.invoke(kprompt).content)}
 {kre(cat.stringify_chat_history(latest_n=4))}
 
 """
+    cat.send_chat_message(repr(kpp_qwery))
+    #cat.send_chat_message(repr(cat._llm))
+
+    #ccat._llm.CustomOllama["num_ctx"] = 8192
+
+    #cat._llm.num_ctx() = settings["kpp_ctx_F"]
+
+#    cat._llm = CustomOllama(
+#    base_url='http://192.168.10.10:11434', 
+#    model='qwen2.5-coder:latest', 
+#    num_ctx=1024,  # Aggiornato a 1024
+#    repeat_last_n=64, 
+#    repeat_penalty=1.1, 
+#    temperature=0.8
+#)
 
     return kpp_qwery
+
+
+@hook
+def agent_prompt_prefix(prefix: str, cat):
+    settings = cat.mad_hatter.get_plugin().load_settings()
+    k_ppf: str = settings["kpp_path"] + settings["kpp_file"]
+    if os.path.exists(k_ppf):
+        with open(k_ppf, 'r') as f:
+            prefix = f.read()
+    else:
+        prefix = settings["prompt_prefix"]
+    return prefix
 
 @hook
 def agent_prompt_suffix(suffix, cat):
@@ -129,3 +151,17 @@ def before_cat_recalls_procedural_memories(default_procedural_recall_config, cat
     ]
 
     return default_procedural_recall_config
+
+def kre(text: str):
+    old: str
+    new: str
+    replacements = [
+        ('- AI', '- KaguraAI'),
+        ('- Human', '- H'),
+        ('{', '/{'),
+        ('}', '/}')
+]
+    for old, new in replacements:
+        text = re.sub(old, new, text)
+        
+    return text

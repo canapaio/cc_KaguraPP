@@ -1,4 +1,4 @@
-# KaguraAI KaguraOS KaguraPP system 0.1.007
+# KaguraAI KaguraOS KaguraPP system 0.1.008
 #
 # KaguraPP
 
