@@ -8,6 +8,9 @@ import os, re, copy
 
 @hook
 def cat_recall_query(user_message, cat):
+    #settings = cat.mad_hatter.get_plugin().load_settings()
+    settings = cat.mad_hatter.get_plugin().load_settings()
+    #kpp_ctx_S = settiongs['']
 
     kprompt = f"""
 Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di parole chiavi congroue in italiano ed iglese seguendo le indicazioni contenute in 'regole':
@@ -25,24 +28,32 @@ Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di
 {kre(cat.stringify_chat_history(latest_n=10))}
 
 </testo-da-analizzare>
-PS (crea solo un elenco di parole chiave in base alla sezione <testo-da-analizzare> usando le <regole> )
+PS (crea solo un elenco di parole chiave in base alla sezione 'testo-da-analizzare' usando le 'regole' come indicato sopra )
 
 """
 
     #CustomOllama = (base_url='http://192.168.10.10:11434', model='qwen2.5-coder:latest', num_ctx=1024, repeat_last_n=64, repeat_penalty=1.1, temperature=0.8)
+    log.info("======================================================")
+    log.info(kprompt)
 
     llm_tmp = copy.deepcopy(cat._llm)
 
-    alt_llm = cat.mad_hatter.get_plugin().load_settings().get('num_ctx', 1024)
+    alt_llm = cat.mad_hatter.get_plugin().load_settings().get('num_ctx', settings['kpp_ctx_S'])
     if alt_llm != '':
         llm_tmp.num_ctx = alt_llm
- 
+    alt_llm = cat.mad_hatter.get_plugin().load_settings().get('model', settings['kpp_model_s'])
+    if alt_llm != '':
+        llm_tmp.model = alt_llm
+    #cat.send_chat_message(repr(llm_tmp))
     kpp_qwery = f"""
 {kre(llm_tmp.invoke(kprompt).content)}
 {kre(cat.stringify_chat_history(latest_n=4))}
 
 """
-    #cat.send_chat_message(repr(kpp_qwery))
+    #cat.send_chat_message
+    log.info("======================================================")
+    log.info(kpp_qwery)
+    log.info("======================================================")
 
     return kpp_qwery
 

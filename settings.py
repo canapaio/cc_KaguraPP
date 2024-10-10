@@ -50,9 +50,13 @@ Parlo in modo umano e sincero.
         title="ollama num ctx full",
         default= 24576
         )
-    kpp_ctx_S: int = Field(
+    kpp_ctx_s: int = Field(
         title="ollama num ctx small",
         default= 4096
+        )
+    kpp_model_s: str = Field(
+        title="ollama small model",
+        default= "gemma2:2b"
         )
 
 
