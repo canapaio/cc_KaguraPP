@@ -35,20 +35,23 @@ def before_cat_sends_message(message, cat):
         with open(kmr_f, 'r') as f:
             klastmind = f.read()
     else:
-        klastmind = "Fin qui tutto bene"
+        klastmind = "indaffarata"
 
     # elabora il prompt del prossimo pensiero
-    kmindprefix += f"""
+    kmindprefix = f"""
+Sei nei pensieri di Kagura:
+{prefix}
+{kmindprefix}
     Mappa mentale precedente:
 <mappa_mentale_precedente>
     {klastmind}
 </mappa_mentale_precedente>
-    Discussione in corso:
+
+Discussione in corso:
 <Discussione>
 {kre(cat.stringify_chat_history(latest_n=4))}
 </Discussione>
-{prefix}
-Crea la mappa mentale come indicato.
+{kmindprefix}
 """
     #cat.send_chat_message(repr(kmindprefix))
     xyzk = kppdebug(kmindprefix)
@@ -90,7 +93,6 @@ Analizza la discussione contenuta in 'testo-da-analizzare' e genera una liste di
 - Aggiungi chiavi non presenti che siano congrue con l'argomento
 - NON COMMENTARE L'ELENCO
 - Crea un elecon pulito privo di commenti
-- Ignoras AI e Human
 </regole>
 
 <testo-da-analizzare>
