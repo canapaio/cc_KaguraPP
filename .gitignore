@@ -154,3 +154,6 @@ cython_debug/
 # Cheshire Cat Plugin settings
 settings.json
 note.txt
+kdebug.txt
+klastmind.txt
+001.mindprefix.txt

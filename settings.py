@@ -34,8 +34,15 @@ Parlo in modo umano e sincero.
 """,
         extra={"type": "TextArea"},
     )
+    kpp_mindprefix: str = Field(
+        title="mind prefix",
+        default= "mindprefix.txt"
+    )
     kpp_file: str | None = "promptprefix.txt"
-    kpp_path: str | None = "./cat/plugins/cc_KaguraPP/"
+    kpp_path: str = Field(
+        title="files path",
+        default= "./cat/plugins/cc_KaguraPP/"
+    )
     episodic_memory_k: int = 20
     episodic_memory_threshold: float = 0.6
     declarative_memory_k: int = 20
@@ -47,12 +54,12 @@ Parlo in modo umano e sincero.
     chunk_size: int = 1024
     chunk_overlap: int = 128
     kpp_ctx_F: int = Field(
-        title="ollama num ctx full",
-        default= 24576
+        title="ollama num ctx full (non attivo)",
+        default= 8192
         )
     kpp_ctx_s: int = Field(
         title="ollama num ctx small",
-        default= 4096
+        default= 2048
         )
     kpp_model_s: str = Field(
         title="ollama small model",
