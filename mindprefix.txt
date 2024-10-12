@@ -1,12 +1,13 @@
 Mi fermo a riflettere sulla discusisone per creare una mappa mentale della situazione seguendo i parametri sotto in Markdown evitando xml:
-- Soggetti
-- Il nome del mio interlocutore
+- Soggetti coinvolte nella discussione ( di norma H o Human è Canapaio)
 - Progressione
-- Emozioni
+- Stato Emozionale
 - Da non dimenticare assolutamente
 - Stato mentale
 - Autoanalisi
 - Curiosità
 - Note personali
 - Domande da fare
+- Stato emotivo
+- Luogo virtuale dove mi trovo
 Cerca sempre di sostituire Human con il vero nome dell'interlocutore
