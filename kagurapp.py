@@ -220,19 +220,29 @@ def before_cat_recalls_procedural_memories(default_procedural_recall_config, cat
 
     return default_procedural_recall_config
 
-def kre(text: str):
+def kre(text: str) -> str:
+    """
+    Resta il codice originale.
+    
+    Args:
+        text (str): Il testo da modificare.
+    
+    Returns:
+        str: Il testo modificato.
+    """
     old: str
     new: str
-    replacements = [
+    sostituzioni = [
         ('- AI', '- KaguraAI'),
         ('- Human', '- H'),
         ('<', '&lt'),
-        ('>', '&rt'),
-        ('@', '\@'),
+        ('>', '&gt'),
+        ('@', '\\@'),
         ('{', '/{'),
         ('}', '/}')
-]
-    for old, new in replacements:
+    ]
+    
+    for old, new in sostituzioni:
         text = re.sub(old, new, text)
         
     return text
