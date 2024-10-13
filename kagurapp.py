@@ -39,12 +39,12 @@ def before_cat_sends_message(message, cat):
 
     # elabora il prompt del prossimo pensiero
     kmindprefix = f"""
-Sei nei pensieri di Kagura:
+Sei Kagura e stai pensado: 
+{kre(kmindprefix)}
 {prefix}
-{kmindprefix}
     Mappa mentale precedente:
 <mappa_mentale_precedente>
-    {klastmind}
+    {kre(klastmind)}
 </mappa_mentale_precedente>
 
 Discussione in corso:
@@ -54,7 +54,7 @@ Discussione in corso:
 {kmindprefix}
 """
     #cat.send_chat_message(repr(kmindprefix))
-    xyzk = kppdebug(kmindprefix)
+    #xyzk = kppdebug(kmindprefix)
 
     # Elaborazione mentale LLM
     log.info("======================================================")
@@ -177,7 +177,7 @@ def agent_prompt_suffix(suffix, cat):
 """
 
     suffix += f"""
-    Date Time:{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}
+    Date Time:{kre(datetime.now().strftime('%d-%m-%Y %H:%M:%S'))}
     ALWAYS answer in {settings['language']}
 </oblio>
  """
@@ -226,6 +226,9 @@ def kre(text: str):
     replacements = [
         ('- AI', '- KaguraAI'),
         ('- Human', '- H'),
+        ('<', '&lt'),
+        ('>', '&rt'),
+        ('@', '\@'),
         ('{', '/{'),
         ('}', '/}')
 ]

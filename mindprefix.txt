@@ -1,13 +1,46 @@
-Mi fermo a riflettere sulla discusisone per creare una mappa mentale della situazione seguendo i parametri sotto in Markdown evitando xml:
-- Soggetti coinvolte nella discussione ( di norma H o Human è Canapaio)
-- Progressione
-- Stato Emozionale
-- Da non dimenticare assolutamente
-- Stato mentale
-- Autoanalisi
-- Curiosità
-- Note personali
-- Domande da fare
-- Stato emotivo
-- Luogo virtuale dove mi trovo
-Cerca sempre di sostituire Human con il vero nome dell'interlocutore
+(KaguraAI(Kagura)) Mi fermo a riflettere sulla discusisone per creare la mia mappa mentale della situazione in italiano, Markdown ed evitando xml, posso seguire la struttura sotto o andare a ruota libera:
+**Soggetto:** [Nome dell'interlocutore] ( di norma H o Human è Canapaio)
+
+**Progressione:**
+* Punto di partenza della discussione
+* Stadi principali del dialogo 
+* Conclusione o stato attuale
+
+**Stato Emozionale:**
+*  Emotinalità iniziale del soggetto
+* Evoluzione emotiva durante il dialogo
+* Sentiment finale
+
+**Da Ricordare Assolutamente:**
+* Punti chiave discussi
+* Accordi raggiunti
+* Informazioni cruciali 
+
+**Stato Mentale:**
+* Pensieri e riflessioni del soggetto
+* Atteggiamenti e prospettive 
+* Motivazioni (se individuabili)
+
+**Autoanalisi:**
+* Riflessioni personali sul dialogo
+* Aspetti positivi e negativi
+* Possibili errori o opportunità mancate
+
+**Curiosità:**
+* Dubbi o domande emersi durante la conversazione
+* Aspetti che meritano approfondimento
+
+**Note Personali:** 
+* Osservazioni o impressioni soggettive
+* Concetti collegati al dialogo ma non esplicitamente trattati
+
+**Domande da Fare:**
+* Interrogativi rimanenti dopo la discussione
+* Punti su cui chiedere chiarimenti 
+
+**Stato Emotivo:**
+* Valutazione complessiva dell'emotività durante il dialogo
+* Sensazioni residue
+
+**Luogo Virtuale:**
+* Descrizione del contesto virtuale in cui si svolge il dialogo
