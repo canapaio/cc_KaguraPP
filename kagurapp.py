@@ -13,7 +13,7 @@ def before_cat_sends_message(message, cat):
     # Variabili
     kmp_f: str = settings["kpp_path"] + settings["kpp_mindprefix"] # File prefix mappa mentale
     kmr_f: str = settings["kpp_path"] + "klastmind.txt" # File salvataggio mappa mentale
-    kpp_f: str = settings["kpp_path"] + settings["kpp_file"] # File prefix mappa mentale
+    kpp_f: str = settings["kpp_path"] + settings["kpp_file"] # File promptprefix Kagura
 
     #caricamento kagura prompt prefix
     if os.path.exists(kpp_f):
@@ -39,20 +39,21 @@ def before_cat_sends_message(message, cat):
 
     # elabora il prompt del prossimo pensiero
     kmindprefix = f"""
-Sei Kagura e stai pensado: 
-{kre(kmindprefix)}
+Personaggio di Kagura che sta pensando:
 {prefix}
-    Mappa mentale precedente:
-<mappa_mentale_precedente>
+<stato_mentale_dinamico_precedente>
     {kre(klastmind)}
-</mappa_mentale_precedente>
-
-Discussione in corso:
+</stato_mentale_dinamico_precedente>
 <Discussione>
 {kre(cat.stringify_chat_history(latest_n=4))}
 </Discussione>
+<prompt>
 {kmindprefix}
+</prompt>
 """
+#Sei Kagura e stai pensado: 
+#{kmindprefix}
+
     #cat.send_chat_message(repr(kmindprefix))
     #xyzk = kppdebug(kmindprefix)
 
@@ -69,17 +70,21 @@ Discussione in corso:
     if alt_llm != '':
         llm_tmp.model = alt_llm
 
-    #cat.send_chat_message(repr(llm_tmp))
-    kmind: str = kre(llm_tmp.invoke(kmindprefix).content)
+    kmind: str = (llm_tmp.invoke(kmindprefix).content)
+
+#debug
+    #cat.send_chat_message(kmind)
+    #xyzk = kppdebug(kmindprefix)
 
     # Salvataggio pensiero
     #kmr_f = settings["kpp_path"] + "klastmind.txt"
     #if os.path.exists(kmr_f):
     with open(kmr_f, 'w') as f:
         f.write(kmind)
-    return
+    return messagge
 
-#############################
+############################# Da riscrivere
+'''
 @hook
 def cat_recall_query(user_message, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
@@ -106,8 +111,8 @@ PS (crea solo un elenco di parole chiave in base alla sezione 'testo-da-analizza
 
     #CustomOllama = (base_url='http://192.168.10.10:11434', model='qwen2.5-coder:latest', num_ctx=1024, repeat_last_n=64, repeat_penalty=1.1, temperature=0.8)
     # chiamata ad un modello semplificato
-    log.info("======================================================")
-    log.info(kprompt)
+    #log.info("======================================================")
+    #log.info(kprompt)
     llm_tmp = copy.deepcopy(cat._llm)
     alt_llm = cat.mad_hatter.get_plugin().load_settings().get('num_ctx', settings['kpp_ctx_S'])
     if alt_llm != '':
@@ -121,12 +126,12 @@ PS (crea solo un elenco di parole chiave in base alla sezione 'testo-da-analizza
 {kre(cat.stringify_chat_history(latest_n=4))}
 """
 
-    log.info("======================================================")
+    #log.info("======================================================")
     #log.info(kpp_qwery)
     #log.info("======================================================")
 
     return kpp_qwery
-
+'''
 
 @hook
 def agent_prompt_prefix(prefix: str, cat):
@@ -134,19 +139,21 @@ def agent_prompt_prefix(prefix: str, cat):
     k_ppf: str = settings["kpp_path"] + settings["kpp_file"]
     if os.path.exists(k_ppf):
         with open(k_ppf, 'r') as f:
-            prefix = f.read()
+            prefix = "Sei Kagura: /n <Kagura_prompt_prefix>" + f.read()
     else:
-        prefix = settings["prompt_prefix"]
+        prefix = "Sei Kagura: /n <Kagura_prompt_prefix>" + settings["prompt_prefix"]
     # Carica il pensiero precedente
     kmr_f: str = settings["kpp_path"] + "klastmind.txt"
     if os.path.exists(kmr_f):
         with open(kmr_f, 'r') as f:
             klastmind = f.read()
     prefix += f"""
-<stato_mentale_dinamico>
+  <stato_mentale_dinamico>
     {klastmind}
-<stato_mentale_dinamico>
-    """
+  <stato_mentale_dinamico>
+</Kagura_prompt_prefix>
+"""
+
     return prefix
 
 @hook
@@ -158,7 +165,7 @@ def agent_prompt_suffix(suffix, cat):
 #    {kre(cat.stringify_chat_history(latest_n=5))}
 #</conversaione>"""
 
-    suffix = """
+    suffix = """<Kagura_suffix>
 1. Da qui inizia l'oblio, (conversazioni passate e memoria richiamata dall'embedder) cerca di seguire il contesto e prendi in considerazione solo i dati utili alla discussione e alla tua personalità:
 2. La tag "Human" non identifica il mio interlocutore, se ho dubbi devo chiedere con chi sto parlando.
 3. La tag "AI" indica le mie parole precedenti (Io sono Kagura)    
@@ -174,12 +181,13 @@ def agent_prompt_suffix(suffix, cat):
 {tools_output}
         </memory-from-executed-actions>
     </memory>
+</oblio>
 """
 
     suffix += f"""
     Date Time:{kre(datetime.now().strftime('%d-%m-%Y %H:%M:%S'))}
     ALWAYS answer in {settings['language']}
-</oblio>
+</Kagura_suffix>
  """
     return suffix
 
@@ -203,9 +211,7 @@ def before_cat_recalls_episodic_memories(default_episodic_recall_config, cat):
 def before_cat_recalls_declarative_memories(default_declarative_recall_config, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
     default_declarative_recall_config["k"] = settings["declarative_memory_k"]
-    default_declarative_recall_config["threshold"] = settings[
-        "declarative_memory_threshold"
-    ]
+    default_declarative_recall_config["threshold"] = settings["declarative_memory_threshold"]
 
     return default_declarative_recall_config
 
@@ -214,9 +220,7 @@ def before_cat_recalls_declarative_memories(default_declarative_recall_config, c
 def before_cat_recalls_procedural_memories(default_procedural_recall_config, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
     default_procedural_recall_config["k"] = settings["procedural_memory_k"]
-    default_procedural_recall_config["threshold"] = settings[
-        "procedural_memory_threshold"
-    ]
+    default_procedural_recall_config["threshold"] = settings["procedural_memory_threshold"]
 
     return default_procedural_recall_config
 
