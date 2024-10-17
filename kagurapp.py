@@ -73,12 +73,10 @@ Personaggio di Kagura che sta pensando:
     kmind: str = (llm_tmp.invoke(kmindprefix).content)
 
 #debug
-    #cat.send_chat_message(kmind)
+    cat.send_chat_message(kmind)
     #xyzk = kppdebug(kmindprefix)
 
     # Salvataggio pensiero
-    #kmr_f = settings["kpp_path"] + "klastmind.txt"
-    #if os.path.exists(kmr_f):
     with open(kmr_f, 'w') as f:
         f.write(kmind)
     return messagge
